@@ -3,10 +3,12 @@ module go-svc-tpl
 go 1.17
 
 require (
+	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/echo/v4 v4.6.3
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/viper v1.10.1
 	github.com/swaggo/echo-swagger v1.2.0
+	github.com/swaggo/swag v1.7.6
 	gorm.io/driver/mysql v1.2.3
 	gorm.io/gorm v1.22.5
 )
@@ -40,7 +42,6 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.2.0 // indirect
 	github.com/swaggo/files v0.0.0-20210815190702-a29dd2bc99b2 // indirect
-	github.com/swaggo/swag v1.7.6 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect
 	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 // indirect

@@ -32,3 +32,8 @@ type UpdateURL struct {
 	StartTime  Time   `json:"startTime"`
 	ExpireTime Time   `json:"expireTime"`
 }
+
+type ReturnInfo struct {
+	Name  string `json:"name"`
+	Email string `json:"email"`
+}
