@@ -11,7 +11,7 @@ var DB *gorm.DB
 
 func Init() {
 	connectDatabase()
-	err := DB.AutoMigrate(&Login{}, &CreateURL{}) // TODO: add table structs here
+	err := DB.AutoMigrate(&Link{}, &Register{}) // TODO: add table structs here
 	if err != nil {
 		logrus.Fatal(err)
 	}
