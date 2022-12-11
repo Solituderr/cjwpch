@@ -2,7 +2,7 @@ package model
 
 // TODO: add crud interface here
 
-// 新增短链接
+// 新增短链接（未登录）
 func addLink(createUrl CreateURL) (uint, error) {
 	var link Link
 	link.Origin = createUrl.Origin
@@ -14,12 +14,33 @@ func addLink(createUrl CreateURL) (uint, error) {
 	if err != nil {
 		return 0, err
 	}
-	return link.Id, err
+	return link.Id, nil
+}
+
+// 新增短链接（已登录）
+func addLinkLogin(createUrl CreateURL, ids uint) (uint, error) {
+	var link Link
+	var user User
+	link.Origin = createUrl.Origin
+	link.Short = createUrl.Short
+	link.Comment = createUrl.Comment
+	link.StartTime = createUrl.StartTime
+	link.ExpireTime = createUrl.ExpireTime
+	err := DB.Create(&link).Error
+	if err != nil {
+		return 0, err
+	}
+	err1 := DB.Where("id = ?", "ids").First(&user).Error
+	if err1 != nil {
+		return 0, err
+	}
+	user.UrlId = append(user.UrlId, link.Id)
+	return link.Id, nil
 }
 
 // 新增用户信息
-func addUser(register Register) error {
-	err := DB.Create(&register).Error
+func addUser(user User) error {
+	err := DB.Create(&user).Error
 	if err != nil {
 		return err
 	}
@@ -28,7 +49,7 @@ func addUser(register Register) error {
 
 // 验证登录信息是否有效
 func getLogin(login Login) (string, error) {
-	var register Register
+	var register User
 	err := DB.Where("email = ? and pwd = ?", login.Email, login.Pwd).First(&register).Error
 	if err != nil {
 		return "fail", err

@@ -6,17 +6,26 @@ import (
 	. "time"
 )
 
-// Register 用户注册信息
-type Register struct {
+// User 用户注册信息
+type User struct {
+	Id    uint   `json:"id" gorm:"primaryKey" form:"id"`
 	Name  string `json:"name"  form:"name"`
 	Email string `json:"email" form:"email"`
 	Pwd   string `json:"pwd"   form:"pwd"`
+	UrlId []uint `json:"urlId" form:"urlId"`
+}
+
+// Register 用户注册信息
+type Register struct {
+	Name  string `json:"name" form:"name"`
+	Email string `json:"email" form:"email"`
+	Pwd   string `json:"pwd" form:"pwd"`
 }
 
 // Login 用户登录信息
 type Login struct {
 	Email string `json:"email" form:"email"`
-	Pwd   string `json:"pwd"   form:"Pwd"`
+	Pwd   string `json:"pwd"   form:"pwd"`
 }
 
 // Link CreateURL 短连接信息
