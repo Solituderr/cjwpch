@@ -5,6 +5,6 @@ import (
 	"net/http"
 )
 
-func GetRes(c echo.Context) error {
+func Pong(c echo.Context) error {
 	return c.String(http.StatusOK, "pong")
 }
