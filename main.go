@@ -1,5 +1,5 @@
 // @title        Golang Service Template
-// @version      0.1
+// @version      0.LinkControl
 // @description  Golang back-end service template, get started with back-end projects quickly
 // @BasePath     /api
 
