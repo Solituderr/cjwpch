@@ -12,14 +12,14 @@ type User struct {
 	Name  string `json:"name"  form:"name"`
 	Email string `json:"email" form:"email"`
 	Pwd   string `json:"pwd"   form:"pwd"`
-	UrlId []uint `json:"shortUrls" form:"shortUrls"`
+	UrlId []uint `json:"urlId" form:"urlId"`
 }
 
-// Register 注册
+// Register 用户注册信息
 type Register struct {
-	Name  string `json:"name"  form:"name"`
+	Name  string `json:"name" form:"name"`
 	Email string `json:"email" form:"email"`
-	Pwd   string `json:"pwd"   form:"pwd"`
+	Pwd   string `json:"pwd" form:"pwd"`
 }
 
 // Login 用户登录信息
