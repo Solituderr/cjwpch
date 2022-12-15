@@ -30,7 +30,7 @@ func addLinkLogin(createUrl CreateURL, ids uint) (uint, error) {
 	if err != nil {
 		return 0, err
 	}
-	err1 := DB.Where("id = ?", "ids").First(&user).Error
+	err1 := DB.Where("id = ?", ids).First(&user).Error
 	if err1 != nil {
 		return 0, err
 	}
@@ -60,7 +60,7 @@ func getLogin(login Login) (string, error) {
 // 查询短链接的详细信息
 func inquireURL(ids uint) (error, Link) {
 	var link Link
-	err := DB.Where("id = ?", "ids").First(&link).Error
+	err := DB.Where("id = ?", ids).First(&link).Error
 	if err != nil {
 		return err, Link{}
 	}
@@ -70,7 +70,7 @@ func inquireURL(ids uint) (error, Link) {
 // 获取用户的所有的短链接
 func getUserAllURL(emails string) (error, []Link) {
 	var link []Link
-	err := DB.Where("email = ?", "emails").Find(&link).Error
+	err := DB.Where("email = ?", emails).Find(&link).Error
 	if err != nil {
 		return err, []Link{}
 	}
@@ -80,7 +80,7 @@ func getUserAllURL(emails string) (error, []Link) {
 // UpdateShortURL 更新短链接
 func updateShortURL(ids uint, update UpdateURL) error {
 	var newURLInfo Link
-	err := DB.Where("id = ?", "ids").First(&newURLInfo).Error
+	err := DB.Where("id = ?", ids).First(&newURLInfo).Error
 	if err != nil {
 		return err
 	}
@@ -95,7 +95,7 @@ func updateShortURL(ids uint, update UpdateURL) error {
 // 删除短链接
 func deleteShortUrl(ids uint) error {
 	var link Link
-	err := DB.Where("id = ?", "ids").Delete(&link).Error
+	err := DB.Where("id = ?", ids).Delete(&link).Error
 	if err != nil {
 		return err
 	}
@@ -105,11 +105,21 @@ func deleteShortUrl(ids uint) error {
 // 暂停短链接
 func pauseUrl(ids uint) error {
 	var link Link
-	err := DB.Where("id = ?", "ids").First(&link).Error
+	err := DB.Where("id = ?", ids).First(&link).Error
 	if err != nil {
 		return err
 	}
 	link.ExpireTime = link.StartTime
 	DB.Save(&link)
 	return nil
+}
+
+// 重定向短链接
+func getUrl(shortUrl string) (string, error) {
+	var link Link
+	err := DB.Where("short = ?", shortUrl).First(&link).Error
+	if err != nil {
+		return "fail", err
+	}
+	return link.Origin, nil
 }
