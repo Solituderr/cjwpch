@@ -21,6 +21,7 @@ func CreateLink(c echo.Context) error {
 		logrus.Error("bind createUrl error!")
 		return Response.SenRes(c, 400, "fail")
 	}
+	create.Short, _ = service.Transform(create.Origin)
 	//调用数据库接口返回是否创建成功
 	if id, err := crud.CreateUrl(create); err != nil {
 		logrus.Error("create link error!")
@@ -41,6 +42,7 @@ func CreateLinkLogin(c echo.Context) error {
 		logrus.Error("bind createUrl error!")
 		return Response.SenRes(c, 400, "fail")
 	}
+	create.Short, _ = service.Transform(create.Origin)
 	if id, err := crud.CreateUrlLogin(create, userId); err != nil {
 		logrus.Error("create link error")
 		return Response.SenRes(c, 400, "fail")
@@ -71,8 +73,9 @@ func UpdateLink(c echo.Context) error {
 		logrus.Error("bind updateUrl error!")
 		return Response.SenRes(c, 400, "fail")
 	}
+	id := update.Id
 	//调用数据库接口返回是否创建成功
-	if err := crud.UpdateUrl(update); err != nil {
+	if err := crud.UpdateUrl(id, update); err != nil {
 		logrus.Error("update url error!")
 		return Response.SenRes(c, 400, "fail")
 	} else {
@@ -113,9 +116,13 @@ func PauseLink(c echo.Context) error {
 
 func Redirect(c echo.Context) error {
 	sl := c.FormValue("shortLink")
-	if url, err := crud.GetUrl(sl); err != nil {
+	url, err := crud.GetUrl(sl)
+	if url == "expired" {
+		return Response.SenRes(c, 400, "shortlink is expired")
+	}
+	if err != nil {
 		return Response.SenRes(c, 400, "fail")
 	} else {
-		return c.Redirect(http.StatusFound, "http://localhost/"+url)
+		return c.Redirect(http.StatusFound, "http://localhost:1232/"+url)
 	}
 }

@@ -41,7 +41,7 @@ func Login(c echo.Context) error {
 		return Response.SenRes(c, 400, "fail")
 	}
 	//传给数据库数据
-	isSuccess, err := crud.CheckUser(login)
+	isSuccess, id, err := crud.CheckUser(login)
 	if err != nil {
 		logrus.Error("check user error!")
 		return Response.SenRes(c, 400, err.Error())
@@ -49,10 +49,8 @@ func Login(c echo.Context) error {
 	if isSuccess == "fail" {
 		return Response.SenRes(c, 400, "password or email is not right")
 	} else {
-		//从数据库获取id
-
 		claims := &model.JwtCustomClaims{
-			Id:   1,
+			Id:   id,
 			Name: login.Email,
 			StandardClaims: jwt.StandardClaims{
 				ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
@@ -73,9 +71,8 @@ func Login(c echo.Context) error {
 func LogOut(c echo.Context) error {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(*model.JwtCustomClaims)
-	s := claims.Name
-	c.set
-	return nil
+	claims.ExpiresAt = time.Now().Unix()
+	return Response.SenRes(c, http.StatusOK, "log out successful")
 }
 
 // Info 用户信息获取
@@ -84,11 +81,11 @@ func Info(c echo.Context) error {
 	claims := user.Claims.(*model.JwtCustomClaims)
 	s := claims.Name
 	//数据库读取
-	name, email, err := crud.GetInfoUser(s)
+	name, pwd, err := crud.GetInfoUser(s)
 	info := struct {
-		name  string
-		email string
-	}{name, email}
+		name string
+		pwd  string
+	}{name, pwd}
 	if err != nil {
 		msg := "get info error"
 		return Response.SenRes(c, http.StatusBadRequest, msg, "")
