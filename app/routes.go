@@ -1,7 +1,6 @@
 package app
 
 import (
-	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"go-svc-tpl/app/Controller"
 	"go-svc-tpl/app/Controller/LinkControl"
@@ -10,7 +9,7 @@ import (
 )
 
 func addRoutes() {
-	e := echo.New()
+	//e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
@@ -40,5 +39,4 @@ func addRoutes() {
 	login.POST("/delete", LinkControl.DeleteLink)
 	login.POST("/pause", LinkControl.PauseLink)
 
-	e.Logger.Fatal(e.Start(":1232"))
 }
