@@ -1,9 +1,11 @@
 package model
 
+import "time"
+
 // TODO: add crud interface here
 
-// 新增短链接（未登录）
-func addLink(createUrl CreateURL) (uint, error) {
+// AddLink 新增短链接（未登录）
+func AddLink(createUrl CreateURL) (uint, error) {
 	var link Link
 	link.Origin = createUrl.Origin
 	link.Short = createUrl.Short
@@ -17,8 +19,8 @@ func addLink(createUrl CreateURL) (uint, error) {
 	return link.Id, nil
 }
 
-// 新增短链接（已登录）
-func addLinkLogin(createUrl CreateURL, ids uint) (uint, error) {
+// AddLinkLogin 新增短链接（已登录）
+func AddLinkLogin(createUrl CreateURL, ids uint) (uint, error) {
 	var link Link
 	var user User
 	link.Origin = createUrl.Origin
@@ -38,27 +40,8 @@ func addLinkLogin(createUrl CreateURL, ids uint) (uint, error) {
 	return link.Id, nil
 }
 
-// 新增用户信息
-func addUser(user User) error {
-	err := DB.Create(&user).Error
-	if err != nil {
-		return err
-	}
-	return err
-}
-
-// 验证登录信息是否有效
-func getLogin(login Login) (string, error) {
-	var register User
-	err := DB.Where("email = ? and pwd = ?", login.Email, login.Pwd).First(&register).Error
-	if err != nil {
-		return "fail", err
-	}
-	return "success", nil
-}
-
-// 查询短链接的详细信息
-func inquireURL(ids uint) (error, Link) {
+// InquireURL 查询短链接的详细信息
+func InquireURL(ids uint) (error, Link) {
 	var link Link
 	err := DB.Where("id = ?", ids).First(&link).Error
 	if err != nil {
@@ -67,18 +50,8 @@ func inquireURL(ids uint) (error, Link) {
 	return nil, link
 }
 
-// 获取用户的所有的短链接
-func getUserAllURL(emails string) (error, []Link) {
-	var link []Link
-	err := DB.Where("email = ?", emails).Find(&link).Error
-	if err != nil {
-		return err, []Link{}
-	}
-	return nil, link
-}
-
 // UpdateShortURL 更新短链接
-func updateShortURL(ids uint, update UpdateURL) error {
+func UpdateShortURL(ids uint, update UpdateURL) error {
 	var newURLInfo Link
 	err := DB.Where("id = ?", ids).First(&newURLInfo).Error
 	if err != nil {
@@ -92,8 +65,8 @@ func updateShortURL(ids uint, update UpdateURL) error {
 	return nil
 }
 
-// 删除短链接
-func deleteShortUrl(ids uint) error {
+// DeleteShortUrl 删除短链接
+func DeleteShortUrl(ids uint) error {
 	var link Link
 	err := DB.Where("id = ?", ids).Delete(&link).Error
 	if err != nil {
@@ -102,8 +75,8 @@ func deleteShortUrl(ids uint) error {
 	return nil
 }
 
-// 暂停短链接
-func pauseUrl(ids uint) error {
+// PauseUrl 暂停短链接
+func PauseUrl(ids uint) error {
 	var link Link
 	err := DB.Where("id = ?", ids).First(&link).Error
 	if err != nil {
@@ -114,12 +87,67 @@ func pauseUrl(ids uint) error {
 	return nil
 }
 
-// 重定向短链接
-func getUrl(shortUrl string) (string, error) {
+// GetUrl 重定向短链接
+func GetUrl(shortUrl string) (string, error) {
 	var link Link
 	err := DB.Where("short = ?", shortUrl).First(&link).Error
 	if err != nil {
 		return "fail", err
 	}
-	return link.Origin, nil
+	now := time.Now()
+	if now.Before(link.ExpireTime) {
+		return link.Origin, nil
+	} else {
+		return "expired", nil
+	}
+}
+
+//-----------------------------------------------------//
+
+// AddUser 新增用户信息
+func AddUser(user Register) error {
+	err := DB.Create(&user).Error
+	if err != nil {
+		return err
+	}
+	return err
+}
+
+// GetLogin 验证登录信息是否有效
+func GetLogin(login Login) (string, uint, error) {
+	var register User
+	err := DB.Where("email = ? and pwd = ?", login.Email, login.Pwd).First(&register).Error
+	if err != nil {
+		return "fail", 0, err
+	}
+	return "success", register.Id, nil
+}
+
+// GetInfoUser 获取用户信息
+func GetInfoUser(emails string) (string, string, error) {
+	var user User
+	err := DB.Where("email = ?", emails).Find(&user).Error
+	if err != nil {
+		return "", "", err
+	}
+	return user.Name, user.Pwd, nil
+}
+
+// GetUserAllURL 获取用户的所有的短链接
+func GetUserAllURL(emails string) (error, []Link) {
+	var user User
+	err := DB.Where("email = ?", emails).Find(&user).Error
+	if err != nil {
+		return err, []Link{}
+	}
+	var link Link
+	var links []Link
+	for _, n := range user.UrlId {
+		err1 := DB.Where("id = ?", n).Find(&link).Error
+		if err1 != nil {
+			return err1, []Link{}
+		}
+		links = append(links, link)
+	}
+	return nil, links
 }
