@@ -15,11 +15,11 @@ func addRoutes() {
 
 	e.GET("/pong", Controller.Pong)
 	//重定向
-	e.POST("/", LinkControl.Redirect)
+	e.GET("/:shortLink", LinkControl.Redirect)
 
 	e.POST("/create", LinkControl.CreateLink)
 	e.POST("/register", UserControl.Register)
-	e.POST("/login", UserControl.Login)
+	e.POST("/log", UserControl.Login)
 
 	login := e.Group("/login")
 	config := middleware.JWTConfig{

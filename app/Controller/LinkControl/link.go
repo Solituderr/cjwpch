@@ -1,7 +1,7 @@
 package LinkControl
 
 import (
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
 	"go-svc-tpl/app/Response"
@@ -39,7 +39,7 @@ func CreateLinkLogin(c echo.Context) error {
 	userId := uint(claims.Id)
 	var create model.CreateURL
 	if err := c.Bind(&create); err != nil {
-		logrus.Error("bind createUrl error!")
+		logrus.Error(err)
 		return Response.SenRes(c, 400, "fail")
 	}
 	create.Short, _ = service.Transform(create.Origin)
@@ -115,7 +115,7 @@ func PauseLink(c echo.Context) error {
 }
 
 func Redirect(c echo.Context) error {
-	sl := c.FormValue("shortLink")
+	sl := c.Param("shortLink")
 	url, err := crud.GetUrl(sl)
 	if url == "expired" {
 		return Response.SenRes(c, 400, "shortlink is expired")
@@ -123,6 +123,6 @@ func Redirect(c echo.Context) error {
 	if err != nil {
 		return Response.SenRes(c, 400, "fail")
 	} else {
-		return c.Redirect(http.StatusFound, "http://localhost:1232/"+url)
+		return c.Redirect(http.StatusFound, url)
 	}
 }

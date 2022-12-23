@@ -36,7 +36,7 @@ func AddLinkLogin(createUrl CreateURL, ids uint) (uint, error) {
 	if err1 != nil {
 		return 0, err
 	}
-	user.UrlId = append(user.UrlId, link.Id)
+	user.UrlInfo = append(user.UrlInfo, link)
 	return link.Id, nil
 }
 
@@ -105,7 +105,12 @@ func GetUrl(shortUrl string) (string, error) {
 //-----------------------------------------------------//
 
 // AddUser 新增用户信息
-func AddUser(user Register) error {
+func AddUser(userInfo Register) error {
+	var user User
+	user.Name = userInfo.Name
+	user.Pwd = userInfo.Pwd
+	user.Email = userInfo.Email
+	user.UrlInfo = []Link{}
 	err := DB.Create(&user).Error
 	if err != nil {
 		return err
@@ -142,10 +147,10 @@ func GetUserAllURL(emails string) (error, []Link) {
 	}
 	var link Link
 	var links []Link
-	for _, n := range user.UrlId {
-		err1 := DB.Where("id = ?", n).Find(&link).Error
+	for _, info := range user.UrlInfo {
+		err1 := DB.Where("Id = ?", info.Id).Find(&link).Error
 		if err1 != nil {
-			return err1, []Link{}
+			continue
 		}
 		links = append(links, link)
 	}

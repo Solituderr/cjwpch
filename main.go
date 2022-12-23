@@ -7,7 +7,7 @@ package main
 
 import (
 	"go-svc-tpl/app"
-	_ "go-svc-tpl/docs"
+	//_ "go-svc-tpl/docs"
 	"go-svc-tpl/model"
 )
 

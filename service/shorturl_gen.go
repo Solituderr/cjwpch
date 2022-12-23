@@ -23,7 +23,7 @@ func Transform(longURL string) (string, error) {
 	var result [4]string
 	var tempUri []byte
 	var output string
-	output = "https://shorturl.com/"
+	output = ""
 	for i := 0; i < 4; i++ {
 		tempSubStr := md5Str[i*8 : (i+1)*8]
 		hexVal, err := strconv.ParseInt(tempSubStr, 16, 64)

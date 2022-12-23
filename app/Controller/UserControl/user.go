@@ -1,7 +1,7 @@
 package UserControl
 
 import (
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
 	"go-svc-tpl/app/Response"
@@ -56,7 +56,7 @@ func Login(c echo.Context) error {
 				ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
 			},
 		}
-		token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
+		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 		t, err := token.SignedString([]byte("secret"))
 		if err != nil {
 			return err
