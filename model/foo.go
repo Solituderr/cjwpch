@@ -14,7 +14,7 @@ type User struct {
 	Name    string `json:"name"  form:"name"`
 	Email   string `json:"email" form:"email"`
 	Pwd     string `json:"pwd"   form:"pwd"`
-	UrlInfo []Link `json:"urlInfo" gorm:"-" form:"urlInfo"`
+	UrlInfo []Link `json:"urlInfo" gorm:"foreignKey:UserId" form:"urlInfo"`
 }
 
 // Register 用户注册信息
@@ -33,6 +33,7 @@ type Login struct {
 // Link CreateURL 短连接信息
 type Link struct {
 	Id         uint      `json:"id" gorm:"primaryKey;auto_increment" form:"id"`
+	UserId     string    `json:"userId"               form:"userId"`
 	Origin     string    `json:"origin"               form:"origin"`
 	Short      string    `json:"short"                form:"short"`
 	Comment    string    `json:"comment"              form:"comment"`

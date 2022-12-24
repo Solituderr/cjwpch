@@ -1,6 +1,10 @@
 package model
 
-import "time"
+import (
+	"fmt"
+	"strconv"
+	"time"
+)
 
 // TODO: add crud interface here
 
@@ -12,6 +16,7 @@ func AddLink(createUrl CreateURL) (uint, error) {
 	link.Comment = createUrl.Comment
 	link.StartTime = createUrl.StartTime
 	link.ExpireTime = createUrl.ExpireTime
+	link.UserId = "0"
 	err := DB.Create(&link).Error
 	if err != nil {
 		return 0, err
@@ -28,15 +33,21 @@ func AddLinkLogin(createUrl CreateURL, ids uint) (uint, error) {
 	link.Comment = createUrl.Comment
 	link.StartTime = createUrl.StartTime
 	link.ExpireTime = createUrl.ExpireTime
+	link.UserId = strconv.Itoa(int(ids))
 	err := DB.Create(&link).Error
 	if err != nil {
 		return 0, err
 	}
 	err1 := DB.Where("id = ?", ids).First(&user).Error
 	if err1 != nil {
-		return 0, err
+		return 0, err1
 	}
-	user.UrlInfo = append(user.UrlInfo, link)
+	fmt.Println(user.UrlInfo)
+	err2 := DB.Model(&user).Association("UrlInfo").Append(&link)
+	if err2 != nil {
+		return 0, err2
+	}
+	fmt.Println(user.UrlInfo)
 	return link.Id, nil
 }
 
@@ -145,14 +156,15 @@ func GetUserAllURL(emails string) (error, []Link) {
 	if err != nil {
 		return err, []Link{}
 	}
-	var link Link
-	var links []Link
-	for _, info := range user.UrlInfo {
-		err1 := DB.Where("Id = ?", info.Id).Find(&link).Error
-		if err1 != nil {
-			continue
-		}
-		links = append(links, link)
-	}
-	return nil, links
+	//var link Link
+	//var links []Link
+	err = DB.Model(&user).Association("UrlInfo").Find(&user.UrlInfo)
+	//for _, info := range user.UrlInfo {
+	//	err1 := DB.Where("id = ?", info.Id).Find(&link).Error
+	//	if err1 != nil {
+	//		continue
+	//	}
+	//	links = append(links, link)
+	//}
+	return nil, user.UrlInfo
 }
