@@ -61,22 +61,23 @@ func QueryLink(c echo.Context) error {
 	}
 	//调用数据库接口返回信息
 	if linkInfo, err := crud.InquireUrl(uint(i)); err != nil {
-		return Response.SenRes(c, 200, "success", linkInfo)
-	} else {
+		logrus.Error(err)
 		return Response.SenRes(c, 400, "fail")
+	} else {
+		return Response.SenRes(c, 200, "success", linkInfo)
 	}
 }
 
 func UpdateLink(c echo.Context) error {
 	var update model.UpdateURL
 	if err := c.Bind(&update); err != nil {
-		logrus.Error("bind updateUrl error!")
+		logrus.Error(err)
 		return Response.SenRes(c, 400, "fail")
 	}
 	id := update.Id
 	//调用数据库接口返回是否创建成功
 	if err := crud.UpdateUrl(id, update); err != nil {
-		logrus.Error("update url error!")
+		logrus.Error(err)
 		return Response.SenRes(c, 400, "fail")
 	} else {
 		return Response.SenRes(c, 200, "success")

@@ -83,8 +83,8 @@ func Info(c echo.Context) error {
 	//数据库读取
 	name, pwd, err := crud.GetInfoUser(s)
 	info := struct {
-		name string
-		pwd  string
+		Name string `json:"name"`
+		Pwd  string `json:"pwd"`
 	}{name, pwd}
 	if err != nil {
 		msg := "get info error"
