@@ -19,9 +19,9 @@ func addRoutes() {
 
 	e.POST("/create", LinkControl.CreateLink)
 	e.POST("/register", UserControl.Register)
-	e.POST("/log", UserControl.Login)
+	e.POST("/login", UserControl.Login)
 
-	login := e.Group("/login")
+	login := e.Group("/user")
 	config := middleware.JWTConfig{
 		Claims:      &model.JwtCustomClaims{},
 		SigningKey:  []byte("secret"),
