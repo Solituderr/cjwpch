@@ -11,7 +11,7 @@ build/
 # DOCS & CONFIG
 docs/
 conf.yaml
-
+conf.json
 # SECRET
 *.pem
 
